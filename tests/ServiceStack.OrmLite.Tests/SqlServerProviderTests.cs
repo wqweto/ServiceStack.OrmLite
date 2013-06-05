@@ -183,5 +183,24 @@ END;";
             Assert.That(result, Is.EqualTo(expected));
         }
 
+        [Test]
+        public void Can_SqlList_StoredProc_accepting_null_parameter()
+        {
+            var sql = @"CREATE PROCEDURE dbo.DummyScalar
+    @Times integer
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+	SELECT @Times AS Id
+END;";
+            db.ExecuteSql("IF OBJECT_ID('DummyScalar') IS NOT NULL DROP PROC DummyScalar");
+            db.ExecuteSql(sql);
+
+            const object expected = null;
+
+            var result = db.SqlScalar<int?>("EXEC DummyScalar @Times", new { Times = (int?)null });
+            Assert.That(result, Is.EqualTo(expected));
+        }
     }
 }
