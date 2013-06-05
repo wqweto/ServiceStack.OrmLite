@@ -239,7 +239,7 @@ namespace ServiceStack.OrmLite
 				p.ParameterName = pi.Name;
 				p.DbType = OrmLiteConfig.DialectProvider.GetColumnDbType(pi.PropertyType);
 				p.Direction = ParameterDirection.Input;
-				p.Value = value;
+				p.Value = value ?? DBNull.Value;
 				dbCmd.Parameters.Add(p);
 			}
 		}
@@ -398,7 +398,7 @@ namespace ServiceStack.OrmLite
 
         internal static List<T> SqlList<T>(this IDbCommand dbCmd, string sql, object anonType = null)
         {
-            if (anonType != null) dbCmd.SetParameters(anonType, true);
+            if (anonType != null) dbCmd.SetParameters(anonType, false);
             dbCmd.CommandText = sql;
 
             using (var dbReader = dbCmd.ExecuteReader())
